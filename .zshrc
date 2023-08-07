@@ -27,7 +27,7 @@ function color() {
 alias rm="rm -i"
 
 # editing zsh config
-ZSHRC=~/.zshrc
+export ZSHRC=~/.zshrc
 function src() {
     source $ZSHRC
     echo "Sourced $ZSHRC" | color $Yellow
@@ -36,17 +36,20 @@ alias ezsh="vim $ZSHRC"
 
 # vim config
 alias v="vim"
-alias evim="vim ~/.vimrc"
+export VIMRC=~/.vimrc
+alias evim="vim $VIMRC"
 
 # tmux config
-alias emux="vim ~/.tmux.conf"
-alias smux="tmux source-file ~/.tmux.conf"
+export TMUX_CONF=~/.tmux.conf
+alias emux="vim $TMUX_CONF"
+alias smux="tmux source-file $TMUX_CONF"
 
 # crtl + right to go forwards a word, crtl + left to go backwards
 bindkey "5C" forward-word
 bindkey "5D" backward-word
 
 # grep magic
+# print file name in yellow, line number in cyan, and num matches
 function fmt_grep() {
     IFS="\n"
     matches=0
@@ -60,6 +63,7 @@ function fmt_grep() {
     echo "$Green$matches MATCHES"
 }
 
+# print number of matches per file
 function fmt_match_count() {
     query=$1
 
@@ -116,4 +120,10 @@ function fws() {
     echo "Files with trailing whitespace:" | color $Red
     gen_grep_exclude_flags
     eval "grep -rlI $GREP_EXCLUDE_FLAGS '[[:blank:]]$' ." | color $Yellow
+}
+
+function mkbash() {
+    script_name=$1
+    echo "#!/bin/bash" > "$script_name.sh"
+    chmod 777 "$script_name.sh"
 }

@@ -29,6 +29,7 @@ set statusline +=\ %m%*                 "modified flag
 set statusline +=%=\ Line:(%4l%*        "current line
 set statusline +=\/%L)%*                "total lines
 set statusline +=\ Column:%4v\%*        "virtual column number
+set relativenumber
 
 " Indentation settings for using 4 spaces instead of tabs.
 " Do not change 'tabstop' from its default value of 8 with this setup.
@@ -49,10 +50,24 @@ nnoremap <C-y> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 " Use case insensitive search, except when using capital letters
 set ignorecase
 set smartcase
+" highlight search
+set hlsearch "Highlights search terms"
+set incsearch "Highlights search terms as you type them"
+" enter to remove highlighting
+nnoremap <CR> :noh<CR>
 
 " enable use of the mouse for all modes
 if has('mouse')
   set mouse=a
 endif
 
+" copies the currently selected text to the system clipboard (OSX)
+let @c = ':w !pbcopy'
+let @p = ':r !pbpaste'
 
+" set leader
+let mapleader = "\\"
+
+" semicolon -> colon
+nnoremap <leader>; ;
+map ; :
