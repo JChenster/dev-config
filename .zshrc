@@ -127,3 +127,8 @@ function mkbash() {
     echo "#!/bin/bash" > "$script_name.sh"
     chmod 777 "$script_name.sh"
 }
+
+# easily exit
+alias xx="exit"
+
+
