@@ -131,4 +131,5 @@ function mkbash() {
 # easily exit
 alias xx="exit"
 
-
+# useful dirs
+alias pg_dir="cd ~/Desktop/Distributed/mapreduce"

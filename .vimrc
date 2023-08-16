@@ -10,6 +10,11 @@ if has('syntax')
   syntax on
 endif
 
+" nav stuff
+inoremap kj <Esc>
+nnoremap J 10j
+nnoremap K 10k
+
 " visuals
 set t_Co=256
 colorscheme torte
@@ -24,6 +29,7 @@ set cursorcolumn
 highlight CursorColumn cterm=NONE ctermbg=gray ctermfg=black guibg=gray guifg=black
 " status line
 set laststatus=2
+set statusline=
 set statusline +=%F                             "file path
 set statusline +=\ [%{&filetype}]               "file type
 set statusline +=\ %m%*                         "modified flag
@@ -61,12 +67,11 @@ if has('mouse')
   set mouse=a
 endif
 
-" copies the currently selected text to the system clipboard (OSX)
-let @c = ':w !pbcopy'
-let @p = ':r !pbpaste'
-
-" set leader
-let mapleader = " "
+" MAC ONLY
+" holy grail copy and paste
+vmap <C-c> :w !pbcopy<CR><CR>
+nmap <C-c> :w !pbcopy<CR><CR>
+map <C-p> :r !pbpaste<CR>
 
 " semicolon -> colon
 nnoremap <leader>; ;
@@ -76,8 +81,8 @@ map ; :
 autocmd Filetype cpp,go let b:comment_token="//"
 autocmd Filetype python,zsh,sh,make let b:comment_token="#"
 autocmd Filetype vim let b:comment_token="\""
-noremap <C-g> :call Comment(b:comment_token)<CR>
-noremap <C-b> :call Uncomment(b:comment_token)<CR>
+noremap <C-f> :call Comment(b:comment_token)<CR>
+noremap <C-g> :call Uncomment(b:comment_token)<CR>
 
 function! Comment(comment_token)
     execute printf(":substitute/^/%s/e | noh", escape(a:comment_token, '/\'))
@@ -99,7 +104,18 @@ iabbrev ;c std::cout <<  << std::endl;<esc>5b3l<c-r>=Eatchar('\s')<CR>
 " c style for loop
 :iabbrev forii for(let i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>xi
 
+" ******************************************************************************
+" LEADER COMMANDS
+" ******************************************************************************
+" set leader
+let mapleader = " "
+
 " see local changes
 command DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0d_ | diffthis | :exe "norm! ".g:diffline."G" | wincmd p | diffthis | wincmd p
 nnoremap <Leader>do :DiffOrig<cr>
 nnoremap <leader>dq :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
+
+nnoremap <leader>s :source ~/.vimrc<CR>
+
+" source plug ins
+so ~/.vim/plugins.vim
