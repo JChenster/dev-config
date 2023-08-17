@@ -133,3 +133,10 @@ alias xx="exit"
 
 # useful dirs
 alias pg_dir="cd ~/Desktop/Distributed/mapreduce"
+
+# ls stuff
+# show dirs in cyan, executables in red
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+# show . files
+alias ls="ls -a -G"
