@@ -1,19 +1,43 @@
-# COLORS
-# Reset
-Color_Off='\033[0m'       # Text Reset
-
-# Regular Colors
-Black='\033[0;30m'        # Black
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[0;33m'       # Yellow
-Blue='\033[0;34m'         # Blue
-Purple='\033[0;35m'       # Purple
-Cyan='\033[0;36m'         # Cyan
-White='\033[0;37m'        # White
+# ******************************************************************************
+# cli aliases
+# ******************************************************************************
 
 # allow escaped chars
 alias echo="echo -e"
+
+# rm safety
+alias rm="rm -i"
+
+# crtl + right to go forwards a word, crtl + left to go backwards
+bindkey "5C" forward-word
+bindkey "5D" backward-word
+
+# ls stuff
+# show dirs in cyan, executables in red
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+# show . files
+alias ls="ls -a -G"
+
+# easily exit
+alias xx="exit"
+
+# ******************************************************************************
+# colors
+# ******************************************************************************
+
+# Reset
+Color_Off='\033[0m'
+
+# Regular Colors
+Black='\033[0;30m'
+Red='\033[0;31m'
+Green='\033[0;32m'
+Yellow='\033[0;33m'
+Blue='\033[0;34m'
+Purple='\033[0;35m'
+Cyan='\033[0;36m'
+White='\033[0;37m'
 
 function color() {
     col=$1
@@ -23,8 +47,9 @@ function color() {
     done
 }
 
-# rm safety
-alias rm="rm -i"
+# ******************************************************************************
+# editing config
+# ******************************************************************************
 
 # editing zsh config
 export ZSHRC=~/.zshrc
@@ -44,11 +69,10 @@ export TMUX_CONF=~/.tmux.conf
 alias emux="vim $TMUX_CONF"
 alias smux="tmux source-file $TMUX_CONF"
 
-# crtl + right to go forwards a word, crtl + left to go backwards
-bindkey "5C" forward-word
-bindkey "5D" backward-word
-
+# ******************************************************************************
 # grep magic
+# ******************************************************************************
+
 # print file name in yellow, line number in cyan, and num matches
 function fmt_grep() {
     IFS="\n"
@@ -81,6 +105,7 @@ function fmt_match_count() {
     echo "${Cyan}$matches MATCHES ACROSS $num_files FILES"
 }
 
+# exclude wacky dirs
 GREP_EXCLUDE_DIRS=(".git")
 GREP_EXCLUDE_FLAGS=""
 
@@ -115,6 +140,10 @@ function grf() {
     grep_helper -nrI $query fmt_match_count
 }
 
+# ******************************************************************************
+# fun functions
+# ******************************************************************************
+
 # list files with trailing whitespace
 function fws() {
     echo "Files with trailing whitespace:" | color $Red
@@ -128,15 +157,8 @@ function mkbash() {
     chmod 777 "$script_name.sh"
 }
 
-# easily exit
-alias xx="exit"
-
+# ******************************************************************************
 # useful dirs
-alias pg_dir="cd ~/Desktop/Distributed/mapreduce"
+# ******************************************************************************
 
-# ls stuff
-# show dirs in cyan, executables in red
-export CLICOLOR=1
-export LSCOLORS=GxFxCxDxBxegedabagaced
-# show . files
-alias ls="ls -a -G"
+alias pg_dir="cd ~/Desktop/Distributed/mapreduce"
