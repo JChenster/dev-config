@@ -5,19 +5,39 @@
 # allow escaped chars
 alias echo="echo -e"
 
-# rm safety
-alias rm="rm -i"
-
-# crtl + right to go forwards a word, crtl + left to go backwards
-bindkey "5C" forward-word
-bindkey "5D" backward-word
-
 # ls stuff
 # show dirs in cyan, executables in red
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 # show . files
 alias ls="ls -a -G"
+
+# safety
+alias rm="rm -i"
+alias cp="cp -i"
+
+# rm a lot of files with double confirmation
+function big_rm() {
+    echo "These files will be deleted:"
+    ls $@
+    echo
+
+    read -q "REPLY?Are you sure? "
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo
+        read -q "REPLY?For real? This can't be undone... "
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            \rm $@
+            echo "\nThe nuke has been done"
+        fi
+    fi
+}
+
+# crtl + right to go forwards a word, crtl + left to go backwards
+bindkey "5C" forward-word
+bindkey "5D" backward-word
 
 # easily exit
 alias xx="exit"
@@ -162,3 +182,33 @@ function mkbash() {
 # ******************************************************************************
 
 alias pg_dir="cd ~/Desktop/Distributed/mapreduce"
+
+# ******************************************************************************
+# zoo stuff
+# ******************************************************************************
+
+NETID="jzc6"
+ZOO_HANDLE="$NETID@node.zoo.cs.yale.edu"
+
+function gen_ssh_key() {
+    ssh-keygen -t rsa -b 4096
+    ssh-copy-id $ZOO_HANDLE
+}
+
+# ssh in fast
+alias zoo="ssh $ZOO_HANDLE"
+
+# put and get files / dirs on zoo easily
+function zoo_put() {
+    src_path=$1
+    dest_dir=$2
+    flags=$3
+    scp $flags $src_path "$ZOO_HANDLE:~/$dest_dir/"
+}
+
+function zoo_get() {
+    src_path=$1
+    dest_dir=$2
+    flag=$3
+    scp $flag "$ZOO_HANDLE:~/$src_path" $dest_dir
+}
