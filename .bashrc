@@ -75,6 +75,13 @@ function src() {
 }
 alias ezsh="vim $ZSHRC"
 
+export BASH_PROFILE="~/.bash_profile"
+function sprof() {
+    source $BASH_PROFILE
+    echo "Sourced $BASH_PROFILE" | color $YELLOW
+}
+alias eprof="vim $BASH_PROFILE"
+
 export BASHRC=~/.bashrc
 function sbash() {
     source $BASHRC
@@ -91,6 +98,10 @@ alias evim="vim $VIMRC"
 export TMUX_CONF=~/.tmux.conf
 alias emux="vim $TMUX_CONF"
 alias smux="tmux source-file $TMUX_CONF"
+
+# killing panes and windows
+alias tkp="tmux kill-pane -t $1"
+alias tkw="tmux kill-window -t $1"
 
 # ******************************************************************************
 # grep magic
