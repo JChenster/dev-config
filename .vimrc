@@ -270,19 +270,41 @@ nnoremap <leader>7 :b7<CR>
 nnoremap <leader>8 :b8<CR>
 nnoremap <leader>9 :b9<CR>
 
-" wrap a long comment across 2 lines (repeat if needed)
-autocmd FileType cpp,go nnoremap <leader>w o//k080lF Dj$p
-autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
-autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
+" holy grail of alignment
+" automatically split a function's args onto separate lines
+" and align them with the first arg
+function! Align()
+    let next_arg='^f,lr'
+    let linebreak="\<CR>"
+
+    " find the second arg and insert line break
+    :call feedkeys(next_arg)
+    :call feedkeys(linebreak)
+
+    " line up the second arg with the first
+    :call feedkeys('^k^jd^^"ay$k^"by$j$p^vkf,F(jr ^d$"ap^')
+
+    " find the next args and insert line break
+    " repeat 20 times (works for up to 20 args)
+    let i = 0
+    while i < 20
+        call feedkeys(next_arg)
+        call feedkeys(linebreak)
+        let i += 1
+    endwhile
+endfunction
+nnoremap <leader>a :call Align()<CR>
+
+" backspace into previous line
+nnoremap <leader>b ^d0i<BS><ESC>
 
 " see local changes
 command DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0d_ | diffthis | :exe "norm! ".g:diffline."G" | wincmd p | diffthis | wincmd p
-nnoremap <Leader>do :DiffOrig<cr>
+nnoremap <leader>do :DiffOrig<cr>
 nnoremap <leader>dq :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
 
 " find word under cursor
 nnoremap <leader>f :execute printf('/%s', escape(expand("<cword>"), '/\'))<CR>
-nnoremap <leader>r :execute printf(':%s//g', escape(expand("<cword>"), '/\'))
 
 " set shell to interactive so we can use bash aliases
 set shellcmdflag=-ic
@@ -293,6 +315,11 @@ command! -nargs=+ GrepFile execute '!grf <args>'
 " Grep for the word under the cursor
 nnoremap <leader>g :Grep <c-r>=expand("<cword>")<cr><cr>
 nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
+
+" add space to visual selection
+vnoremap <leader><leader> : norm I <CR>
+" repeat that
+nmap <leader>. gv  <CR>
 
 " re-source vim
 nnoremap <leader>s :source ~/.vimrc<CR>:echo "re-sourced vimrc"<CR>
@@ -314,6 +341,11 @@ function! TruncateLine()
     endif
 endfunction
 nnoremap <leader>t :call TruncateLine()<CR>
+
+" wrap a long comment across 2 lines (repeat if needed)
+autocmd FileType cpp,go nnoremap <leader>w o//k080lF Dj$p
+autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
+autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
 
 " ******************************************************************************
 " hype stuff
