@@ -246,7 +246,7 @@ autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
 autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>i
 autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
 
-" c style for loop
+" for loops
 autocmd Filetype cpp,c iabbrev <buffer> ;f for(int i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>xi
 
 " ******************************************************************************
@@ -280,6 +280,20 @@ command DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0
 nnoremap <Leader>do :DiffOrig<cr>
 nnoremap <leader>dq :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
 
+" find word under cursor
+nnoremap <leader>f :execute printf('/%s', escape(expand("<cword>"), '/\'))<CR>
+nnoremap <leader>r :execute printf(':%s//g', escape(expand("<cword>"), '/\'))
+
+" set shell to interactive so we can use bash aliases
+set shellcmdflag=-ic
+
+command! -nargs=+ Grep execute '!gr <args>'
+command! -nargs=+ GrepFile execute '!grf <args>'
+
+" Grep for the word under the cursor
+nnoremap <leader>g :Grep <c-r>=expand("<cword>")<cr><cr>
+nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
+
 " re-source vim
 nnoremap <leader>s :source ~/.vimrc<CR>:echo "re-sourced vimrc"<CR>
 " section comments
@@ -328,143 +342,3 @@ function! s:UsageHighlightUnderCursor()
 endfunction
 
 autocmd FileType * autocmd CursorMoved * call s:UsageHighlightUnderCursor()
-
-" set shell to interactive so we can use bash aliases
-set shellcmdflag=-ic
-
-command! -nargs=+ Grep execute '!gr <args>'
-command! -nargs=+ GrepFile execute '!grf <args>'
-
-" Grep for the word under the cursor
-nnoremap <leader>g :Grep <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
-
-
-function! Comment(comment_token)
-    execute printf(":substitute/^/%s/e | noh", escape(a:comment_token, '/\'))
-endfunction
-noremap <C-f> :call Comment(b:comment_token)<CR>
-
-function! Uncomment(comment_token)
-    execute printf(":substitute/^%s//e | noh", escape(a:comment_token, '/\'))
-endfunction
-noremap <C-g> :call Uncomment(b:comment_token)<CR>
-
-" ******************************************************************************
-" abbrevs
-" ******************************************************************************
-
-func! Eatchar(pat)
-   let c = nr2char(getchar(0))
-   return (c =~ a:pat) ? '' : c
-endfunc
-
-" create more abbrevs
-autocmd Filetype vim iabbrev <buffer> ;a autocmd Filetype  iabbrev <buffer><ESC>3b1h<c-r>=Eatchar('\s')<CR>
-
-" multi-line comments
-autocmd Filetype cpp,c iabbrev <buffer> ;c /*<CR><CR><BS>*/<Up>
-autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
-
-" print
-autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>i
-autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
-
-" c style for loop
-autocmd Filetype cpp,c iabbrev <buffer> ;f for(int i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>xi
-
-" ******************************************************************************
-" leader commands
-" ******************************************************************************
-" set leader
-let mapleader = " "
-
-" since we remapped ; -> :
-nnoremap <leader>; ;
-
-" buffer stuff
-nnoremap <leader>l :ls<CR>
-nnoremap <leader>1 :b1<CR>
-nnoremap <leader>2 :b2<CR>
-nnoremap <leader>3 :b3<CR>
-nnoremap <leader>4 :b4<CR>
-nnoremap <leader>5 :b5<CR>
-nnoremap <leader>6 :b6<CR>
-nnoremap <leader>7 :b7<CR>
-nnoremap <leader>8 :b8<CR>
-nnoremap <leader>9 :b9<CR>
-
-" see local changes
-command! DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0d_ | diffthis | :exe "norm! ".g:diffline."G" | wincmd p | diffthis | wincmd p
-nnoremap <Leader>do :DiffOrig<cr>
-nnoremap <leader>dq :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
-
-" set shell to interactive so we can use bash aliases
-set shellcmdflag=-ic
-
-command! -nargs=+ Grep execute '!gr <args>'
-command! -nargs=+ GrepFile execute '!grf <args>'
-
-" Grep for the word under the cursor
-nnoremap <leader>g :Grep <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
-
-" insert new line below / above without leaving normal mode
-nnoremap <leader>o o<Esc>k
-nnoremap <leader>O O<Esc>j
-
-" re-source vim
-nnoremap <leader>s :source ~/.vimrc<CR>:echo "re-sourced vimrc"<CR>
-" section comments
-function! SectionComment()
-    call feedkeys("o# \<Esc>78a*\<Esc>")
-endfunction
-nnoremap <leader>sc :call SectionComment()<CR>
-
-function! FixSectionComment(comment_token)
-    execute printf(":s/\#/%s/e | noh", escape(a:comment_token, '/\'))
-endfunction
-nnoremap <leader>sf :call FixSectionComment(b:comment_token)<CR>
-
-" truncate all characters after 80 chars
-function! TruncateLine()
-    if strlen(getline(".")) > 80
-        call feedkeys("^81ld$")
-    endif
-endfunction
-nnoremap <leader>t :call TruncateLine()<CR>
-
-" wrap a long comment across 2 lines (repeat if needed)
-autocmd FileType cpp,go nnoremap <leader>w o//k080lF Dj$p
-autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
-autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
-
-" ******************************************************************************
-" hype stuff
-" ******************************************************************************
-
-highlight UsageSearch cterm=underline
-
-" Highlight the word under the cursor if it is a variable.
-let g:usage_highlighting = 0
-" I know it seems weird to exclude constants and identifiers but this is just a
-" result of how our weird syntax classification works. Variables seem to be the
-" only things _not_ identified. Constants and identifiers are something else.
-let g:no_highlight_groups=["Statement", "Comment", "Type", "PreProc", "Constant", "Identifier"]
-function! s:UsageHighlightUnderCursor()
-    let l:syntaxgroup = synIDattr(synIDtrans(synID(line("."), stridx(getline("."), expand('<cword>')) + 1, 1)), "name")
-
-    if (index(g:no_highlight_groups, l:syntaxgroup) == -1)
-        exe printf('match UsageSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
-        let g:usage_highlighting = 1
-    else
-        if (g:usage_highlighting == 1)
-            exe 'match UsageSearch /\V\<\>/'
-            let g:usage_highlighting = 0
-        endif
-    endif
-endfunction
-
-autocmd FileType * autocmd CursorMoved * call s:UsageHighlightUnderCursor()
-
-" git hype
