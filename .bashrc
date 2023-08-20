@@ -103,6 +103,8 @@ alias smux="tmux source-file $TMUX_CONF"
 alias tkp="tmux kill-pane -t $1"
 alias tkw="tmux kill-window -t $1"
 
+alias econf="vim $BASHRC $TMUX_CONF $VIMRC $BASH_PROFILE"
+
 # ******************************************************************************
 # grep magic
 # ******************************************************************************
@@ -130,7 +132,6 @@ function fmt_match_count() {
         files+=" ${line%%:*}"
         matches=$((matches + 1))
     done
-    echo $files
 
     cmd="grep -c $query $files | uniq"
     eval $cmd | awk -F: '{printf "\033[33m" $1 ": \033[32m" $2 " MATCHES\n"}'
@@ -158,7 +159,6 @@ function grep_helper() {
     cmd=""
     cmd="grep $flags $GREP_EXCLUDE_FLAGS --color=always"
     cmd+=" $query ."
-    echo $cmd
     eval $cmd | $fmt_func $query
 }
 
