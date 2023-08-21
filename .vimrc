@@ -25,9 +25,6 @@ if has('mouse')
     set mouse=a
 endif
 
-" semicolon -> colon
-map ; :
-
 " entering next line of comment should not continue comment
 autocmd BufNewFile,BufRead * set formatoptions-=c formatoptions-=r formatoptions-=o
 
@@ -79,110 +76,8 @@ nnoremap <CR> :noh<CR>
 set ignorecase
 set smartcase
 " highlight search
-set hlsearch "Highlights search terms"
-set incsearch "Highlights search terms as you type them"
-
-" ******************************************************************************
-" formatting
-" ******************************************************************************
-
-" highlight trailing whitespace
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-
-" remove trailing whitespace
-nnoremap <C-y> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
-
-" commenting and uncommenting
-autocmd Filetype cpp,go let b:comment_token="//"
-autocmd Filetype python,zsh,sh,make let b:comment_token="#"
-autocmd Filetype vim let b:comment_token="\""
-
-" ******************************************************************************
-" vim essentials
-" ******************************************************************************
-
-" source plug ins
-so ~/.vim/plugins.vim
-
-" infer filetype
-if has('filetype')
-filetype indent plugin on
-endif
-
-" syntax highlighting
-if has('syntax')
-syntax on
-endif
-
-" Indentation settings for using 4 spaces instead of tabs.
-set shiftwidth=4
-set softtabstop=4
-set expandtab
-
-" enable use of the mouse for all modes
-if has('mouse')
-set mouse=a
-endif
-
-" semicolon -> colon
-map ; :
-
-" entering next line of comment should not continue comment
-autocmd BufNewFile,BufRead * set formatoptions-=c formatoptions-=r formatoptions-=o
-
-" ******************************************************************************
-" navigation
-" ******************************************************************************
-
-" home row escape
-inoremap kj <Esc>
-
-" warp speed
-nnoremap J 10j
-nnoremap K 10k
-
-" ******************************************************************************
-" visuals
-" ******************************************************************************
-
-set t_Co=256
-colorscheme torte
-set number
-
-" highlight column 80
-set colorcolumn=80
-highlight ColorColumn ctermbg=yellow guibg=yellow
-
-" crosshair
-set cursorline
-hi CursorLine cterm=none ctermbg=239
-set cursorcolumn
-hi CursorColumn term=reverse ctermbg=239
-
-" status line
-set laststatus=2
-set statusline=
-set statusline +=%F                             "file path
-set statusline +=\ [%{&filetype}]               "file type
-set statusline +=\ %m%*                         "modified flag
-set statusline +=%=Line:(%4l%*                  "current line
-set statusline +=\/%L)%*                        "total lines
-set statusline +=%=\ \ \ \ Column:%3v\%*        "virtual column number
-
-" enter to remove highlighting
-nnoremap <CR> :noh<CR>
-
-" Use case insensitive search, except when using capital letters
-set ignorecase
-set smartcase
-" highlight search
-set hlsearch "Highlights search terms"
-set incsearch "Highlights search terms as you type them"
+set hlsearch
+set incsearch
 
 " ******************************************************************************
 " formatting
@@ -232,9 +127,6 @@ autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 " ******************************************************************************
 " set leader
 let mapleader = " "
-
-" since we remapped ; -> :
-nnoremap <leader>; ;
 
 " buffer stuff
 nnoremap <leader>l :ls<CR>
@@ -332,6 +224,12 @@ nmap <leader>. gv  <CR>
 nnoremap <leader>o o<Esc>k
 nnoremap <leader>O O<Esc>j
 
+" find and replace
+nnoremap <Space>r :%s/\<<C-r>=expand("<cword>")<CR>\>/
+
+" sort visual selection
+vnoremap <leader>s :sort<CR>
+
 " re-source vim
 nmap <leader>s :source ~/.vimrc<CR><CR>:echo "re-sourced vimrc"<CR>
 " section comments
@@ -360,6 +258,16 @@ nnoremap <leader>t :call TruncateLine()<CR>
 autocmd FileType cpp,go nnoremap <leader>w o//k080lF Dj$p
 autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
 autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
+
+" yanks a visual selection and pastes it onto system keyboard with file name and
+" line numbers
+function! DecoratedYank()
+    redir @n | silent! :'<,'>number | redir END
+    let filename=expand("%")
+    let decoration=repeat('-', len(filename)+1)
+    let @*=decoration . "\n" . filename . ':' . "\n" . decoration . "\n" . @n
+endfunction
+vnoremap <leader>y :call DecoratedYank()<CR>
 
 " ******************************************************************************
 " hype stuff
