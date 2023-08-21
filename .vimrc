@@ -7,12 +7,12 @@ so ~/.vim/plugins.vim
 
 " infer filetype
 if has('filetype')
-  filetype indent plugin on
+    filetype indent plugin on
 endif
 
 " syntax highlighting
 if has('syntax')
-  syntax on
+    syntax on
 endif
 
 " Indentation settings for using 4 spaces instead of tabs.
@@ -22,14 +22,8 @@ set expandtab
 
 " enable use of the mouse for all modes
 if has('mouse')
-  set mouse=a
+    set mouse=a
 endif
-
-" MAC ONLY
-" holy grail copy and paste
-vmap <C-c> :w !pbcopy<CR><CR>
-nmap <C-c> :w !pbcopy<CR><CR>
-map <C-p> :r !pbpaste<CR>
 
 " semicolon -> colon
 map ; :
@@ -117,12 +111,12 @@ so ~/.vim/plugins.vim
 
 " infer filetype
 if has('filetype')
-  filetype indent plugin on
+filetype indent plugin on
 endif
 
 " syntax highlighting
 if has('syntax')
-  syntax on
+syntax on
 endif
 
 " Indentation settings for using 4 spaces instead of tabs.
@@ -132,14 +126,8 @@ set expandtab
 
 " enable use of the mouse for all modes
 if has('mouse')
-  set mouse=a
+set mouse=a
 endif
-
-" MAC ONLY
-" holy grail copy and paste
-vmap <C-c> :w !pbcopy<CR><CR>
-nmap <C-c> :w !pbcopy<CR><CR>
-map <C-p> :r !pbpaste<CR>
 
 " semicolon -> colon
 map ; :
@@ -216,8 +204,8 @@ nnoremap <C-y> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 " ******************************************************************************
 
 func Eatchar(pat)
-   let c = nr2char(getchar(0))
-   return (c =~ a:pat) ? '' : c
+    let c = nr2char(getchar(0))
+    return (c =~ a:pat) ? '' : c
 endfunc
 
 " create more abbrevs
@@ -288,6 +276,12 @@ nnoremap <leader>a :call Align()<CR>
 " backspace into previous line
 nnoremap <leader>b ^d0i<BS><ESC>
 
+" MAC ONLY
+" holy grail copy and paste
+vmap <leader>c :w !pbcopy<CR><CR>
+nmap <leader>c :w !pbcopy<CR><CR>
+map <leader>p :r !pbpaste<CR>
+
 " commenting and uncommenting
 autocmd Filetype cpp,go let b:comment_token="//"
 autocmd Filetype python,zsh,sh,make let b:comment_token="#"
@@ -296,7 +290,7 @@ autocmd Filetype vim let b:comment_token="\""
 function! Comment(comment_token)
     execute printf(":substitute/^/%s/e | noh", escape(a:comment_token, '/\'))
 endfunction
-noremap <leader>c :call Comment(b:comment_token)<CR>
+noremap <leader>co :call Comment(b:comment_token)<CR>
 
 function! Uncomment(comment_token)
     execute printf(":substitute/^%s//e | noh", escape(a:comment_token, '/\'))
@@ -350,6 +344,9 @@ function! FixSectionComment(comment_token)
     execute printf(":s/\#/%s/e | noh", escape(a:comment_token, '/\'))
 endfunction
 nnoremap <leader>sf :call FixSectionComment(b:comment_token)<CR>
+
+" easily toggle spellcheck
+nnoremap <leader>sp :set spell!<CR>
 
 " truncate all characters after 80 chars
 function! TruncateLine()
