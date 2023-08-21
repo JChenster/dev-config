@@ -211,21 +211,6 @@ match ExtraWhitespace /\s\+$/
 " remove trailing whitespace
 nnoremap <C-y> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
-" commenting and uncommenting
-autocmd Filetype cpp,go let b:comment_token="//"
-autocmd Filetype python,zsh,sh,make let b:comment_token="#"
-autocmd Filetype vim let b:comment_token="\""
-
-function! Comment(comment_token)
-    execute printf(":substitute/^/%s/e | noh", escape(a:comment_token, '/\'))
-endfunction
-noremap <C-f> :call Comment(b:comment_token)<CR>
-
-function! Uncomment(comment_token)
-    execute printf(":substitute/^%s//e | noh", escape(a:comment_token, '/\'))
-endfunction
-noremap <C-g> :call Uncomment(b:comment_token)<CR>
-
 " ******************************************************************************
 " abbrevs
 " ******************************************************************************
@@ -242,12 +227,17 @@ autocmd Filetype vim iabbrev <buffer> ;a autocmd Filetype  iabbrev <buffer><ESC>
 autocmd Filetype cpp,c iabbrev <buffer> ;c /*<CR><CR><BS>*/<Up>
 autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
 
+" imports
+autocmd Filetype cpp,c iabbrev <buffer> ;i #include
+autocmd Filetype python iabbrev <buffer> ;i import
+
 " print
-autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>i
+autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>
 autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
 
 " for loops
-autocmd Filetype cpp,c iabbrev <buffer> ;f for(int i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>xi
+autocmd Filetype cpp,c iabbrev <buffer> ;f for(int i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>x
+autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 
 " ******************************************************************************
 " leader commands
@@ -298,16 +288,35 @@ nnoremap <leader>a :call Align()<CR>
 " backspace into previous line
 nnoremap <leader>b ^d0i<BS><ESC>
 
+" commenting and uncommenting
+autocmd Filetype cpp,go let b:comment_token="//"
+autocmd Filetype python,zsh,sh,make let b:comment_token="#"
+autocmd Filetype vim let b:comment_token="\""
+
+function! Comment(comment_token)
+    execute printf(":substitute/^/%s/e | noh", escape(a:comment_token, '/\'))
+endfunction
+noremap <leader>c :call Comment(b:comment_token)<CR>
+
+function! Uncomment(comment_token)
+    execute printf(":substitute/^%s//e | noh", escape(a:comment_token, '/\'))
+endfunction
+noremap <leader>u :call Uncomment(b:comment_token)<CR>
+
 " see local changes
 command DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0d_ | diffthis | :exe "norm! ".g:diffline."G" | wincmd p | diffthis | wincmd p
 nnoremap <leader>do :DiffOrig<cr>
 nnoremap <leader>dq :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
 
+" execute current file
+autocmd FileType python nnoremap <leader>e :!python3 <C-r>%<CR>
+autocmd FileType sh nnoremap <leader>e :!./<C-r>%<CR>
+
 " find word under cursor
 nnoremap <leader>f :execute printf('/%s', escape(expand("<cword>"), '/\'))<CR>
 
-" set shell to interactive so we can use bash aliases
-set shellcmdflag=-ic
+" use grep aliases
+let $BASH_ENV = "~/.portable_aliases"
 
 command! -nargs=+ Grep execute '!gr <args>'
 command! -nargs=+ GrepFile execute '!grf <args>'
@@ -316,13 +325,21 @@ command! -nargs=+ GrepFile execute '!grf <args>'
 nnoremap <leader>g :Grep <c-r>=expand("<cword>")<cr><cr>
 nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
 
+" git stuff
+nnoremap <leader>gd :!git diff <C-r>%<CR>
+nnoremap <leader>gs :!git status<CR>
+
 " add space to visual selection
 vnoremap <leader><leader> : norm I <CR>
 " repeat that
 nmap <leader>. gv  <CR>
 
+" insert new line below / above without leaving normal mode
+nnoremap <leader>o o<Esc>k
+nnoremap <leader>O O<Esc>j
+
 " re-source vim
-nnoremap <leader>s :source ~/.vimrc<CR>:echo "re-sourced vimrc"<CR>
+nmap <leader>s :source ~/.vimrc<CR><CR>:echo "re-sourced vimrc"<CR>
 " section comments
 function! SectionComment()
     call feedkeys("o# \<Esc>78a*\<Esc>")
