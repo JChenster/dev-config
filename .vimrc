@@ -40,6 +40,12 @@ inoremap kj <Esc>
 " warp speed
 nnoremap J 10j
 nnoremap K 10k
+" allow us to still merge lines
+nnoremap m J
+
+" visual mode entire file
+" for some reason i need to press this twice for it to work
+nnoremap <C-a> :call feedkeys("ggVG")<CR>
 
 " ******************************************************************************
 " visuals
@@ -128,6 +134,11 @@ autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 " set leader
 let mapleader = " "
 
+" add space to visual selection
+vnoremap <leader><leader> : norm I <CR>
+" repeat that
+nmap <leader>. gv  <CR>
+
 " buffer stuff
 nnoremap <leader>l :ls<CR>
 nnoremap <leader>1 :b1<CR>
@@ -169,10 +180,10 @@ nnoremap <leader>a :call Align()<CR>
 nnoremap <leader>b ^d0i<BS><ESC>
 
 " MAC ONLY
-" holy grail copy and paste
+" holy grail copy, paste, cut to system clipboard
 vmap <leader>c :w !pbcopy<CR><CR>
-nmap <leader>c :w !pbcopy<CR><CR>
 map <leader>p :r !pbpaste<CR>
+vmap <leader>x <leader>cgvd
 
 " commenting and uncommenting
 autocmd Filetype cpp,go let b:comment_token="//"
@@ -214,11 +225,6 @@ nnoremap <leader>gf :GrepFile <c-r>=expand("<cword>")<cr><cr>
 " git stuff
 nnoremap <leader>gd :!git diff <C-r>%<CR>
 nnoremap <leader>gs :!git status<CR>
-
-" add space to visual selection
-vnoremap <leader><leader> : norm I <CR>
-" repeat that
-nmap <leader>. gv  <CR>
 
 " insert new line below / above without leaving normal mode
 nnoremap <leader>o o<Esc>k
