@@ -97,7 +97,6 @@ alias evim="vim $VIMRC"
 # tmux config
 export TMUX_CONF=~/.tmux.conf
 alias emux="vim $TMUX_CONF"
-alias smux="tmux source-file $TMUX_CONF"
 
 # killing panes and windows
 alias tkp="tmux kill-pane -t $1"

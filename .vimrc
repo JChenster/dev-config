@@ -176,9 +176,6 @@ function! Align()
 endfunction
 nnoremap <leader>a :call Align()<CR>
 
-" backspace into previous line
-nnoremap <leader>b ^d0i<BS><ESC>
-
 " MAC ONLY
 " holy grail copy, paste, cut to system clipboard
 vmap <leader>c :w !pbcopy<CR><CR>
