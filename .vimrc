@@ -30,6 +30,9 @@ autocmd BufNewFile,BufRead * set formatoptions-=c formatoptions-=r formatoptions
 
 set noswapfile
 
+" don't use octal system for #s with leading 0s
+set nrformats=
+
 " ******************************************************************************
 " navigation
 " ******************************************************************************
@@ -43,9 +46,8 @@ nnoremap K 10k
 " allow us to still merge lines
 nnoremap m J
 
-" visual mode entire file
-" for some reason i need to press this twice for it to work
-nnoremap <C-a> :call feedkeys("ggVG")<CR>
+" make crtl + c equiv to esc
+imap <C-c> <Esc>
 
 " ******************************************************************************
 " visuals
@@ -71,9 +73,10 @@ set statusline=
 set statusline +=%F                             "file path
 set statusline +=\ [%{&filetype}]               "file type
 set statusline +=\ %m%*                         "modified flag
+set statusline +=%=Buffer:\ %-5.3n
 set statusline +=%=Line:(%4l%*                  "current line
 set statusline +=\/%L)%*                        "total lines
-set statusline +=%=\ \ \ \ Column:%3v\%*        "virtual column number
+set statusline +=%=\ \ \ \Column:%3v\%*        "virtual column number
 
 " enter to remove highlighting
 nnoremap <CR> :noh<CR>
@@ -176,6 +179,9 @@ function! Align()
 endfunction
 nnoremap <leader>a :call Align()<CR>
 
+" visual mode entire file
+nnoremap <leader>af :call feedkeys("ggVG")<CR>
+
 " MAC ONLY
 " holy grail copy, paste, cut to system clipboard
 vmap <leader>c :w !pbcopy<CR><CR>
@@ -228,7 +234,7 @@ nnoremap <leader>o o<Esc>k
 nnoremap <leader>O O<Esc>j
 
 " find and replace
-nnoremap <Space>r :%s/\<<C-r>=expand("<cword>")<CR>\>/
+nnoremap <leader>r :%s/\<<C-r>=expand("<cword>")<CR>\>/
 
 " sort visual selection
 vnoremap <leader>s :sort<CR>
