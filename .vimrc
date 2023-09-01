@@ -116,7 +116,7 @@ endfunc
 autocmd Filetype vim iabbrev <buffer> ;a autocmd Filetype  iabbrev <buffer><ESC>3b1h<c-r>=Eatchar('\s')<CR>
 
 " multi-line comments
-autocmd Filetype cpp,c iabbrev <buffer> ;c /*<CR><CR><BS>*/<Up>
+autocmd Filetype cpp,c,java iabbrev <buffer> ;c /*<CR><CR><BS>*/<Up>
 autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
 
 " imports
@@ -189,7 +189,7 @@ map <leader>p :r !pbpaste<CR>
 vmap <leader>x <leader>cgvd
 
 " commenting and uncommenting
-autocmd Filetype cpp,go let b:comment_token="//"
+autocmd Filetype cpp,go,java let b:comment_token="//"
 autocmd Filetype python,zsh,sh,make let b:comment_token="#"
 autocmd Filetype vim let b:comment_token="\""
 
@@ -264,9 +264,12 @@ endfunction
 nnoremap <leader>t :call TruncateLine()<CR>
 
 " wrap a long comment across 2 lines (repeat if needed)
-autocmd FileType cpp,go nnoremap <leader>w o//k080lF Dj$p
+autocmd FileType cpp,go,java nnoremap <leader>w o//k080lF Dj$p
 autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
 autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
+
+" for multiline java comments
+autocmd FileType java nnoremap <leader>wj o*k080lF Dj$p
 
 " yanks a visual selection and pastes it onto system keyboard with file name and
 " line numbers

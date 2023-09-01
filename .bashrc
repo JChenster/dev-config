@@ -35,8 +35,13 @@ function big_rm() {
     fi
 }
 
-# easily exit
+# shortcuts
+alias cl="clear"
 alias xx="exit"
+
+# comments on how to navigate bash command line in Mac
+# crtl-b, crtl-e to go to beginning/end of line
+# opt-left, opt-right to go backwards/forwards a word
 
 # ******************************************************************************
 # colors
@@ -130,11 +135,17 @@ function mksh() {
     echo "Created script file: $file" | color $Red
 }
 
+function ff() {
+    pattern=$1
+    find . -print | grep -i $pattern
+}
+
 # ******************************************************************************
 # useful dirs
 # ******************************************************************************
 
-alias pg_dir="cd ~/Desktop/Distributed/mapreduce"
+alias db_dir="cd ~/Desktop/Databases/CPSC-440-FA23"
+alias pg_dir="cd ~/Desktop/Spring2023/Distributed/mapreduce"
 
 # ******************************************************************************
 # zoo stuff
