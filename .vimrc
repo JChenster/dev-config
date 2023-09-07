@@ -28,8 +28,6 @@ endif
 " entering next line of comment should not continue comment
 autocmd BufNewFile,BufRead * set formatoptions-=c formatoptions-=r formatoptions-=o
 
-set noswapfile
-
 " don't use octal system for #s with leading 0s
 set nrformats=
 
@@ -121,14 +119,16 @@ autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
 
 " imports
 autocmd Filetype cpp,c iabbrev <buffer> ;i #include
-autocmd Filetype python iabbrev <buffer> ;i import
+autocmd Filetype python,java iabbrev <buffer> ;i import
+autocmd Filetype java iabbrev <buffer> ;j import java.util.
 
 " print
 autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>
 autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
+autocmd Filetype java iabbrev <buffer> ;p System.out.printf("\n");<ESC>5h
 
 " for loops
-autocmd Filetype cpp,c iabbrev <buffer> ;f for(int i = 0; i <z; i++) {<CR><CR>}<Esc>?z<CR>x
+autocmd Filetype cpp,c,java iabbrev <buffer> ;f for (int i = 0; i < z; i++) {<CR><CR>}<Esc>?z<CR>xh
 autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 
 " ******************************************************************************
@@ -189,7 +189,7 @@ map <leader>p :r !pbpaste<CR>
 vmap <leader>x <leader>cgvd
 
 " commenting and uncommenting
-autocmd Filetype cpp,go,java let b:comment_token="//"
+autocmd Filetype cpp,c,go,java let b:comment_token="//"
 autocmd Filetype python,zsh,sh,make let b:comment_token="#"
 autocmd Filetype vim let b:comment_token="\""
 
@@ -266,6 +266,7 @@ nnoremap <leader>t :call TruncateLine()<CR>
 " wrap a long comment across 2 lines (repeat if needed)
 autocmd FileType cpp,go,java nnoremap <leader>w o//k080lF Dj$p
 autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
+autocmd FileType text nmap <leader>w 080lF D ojp0x
 autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
 
 " for multiline java comments

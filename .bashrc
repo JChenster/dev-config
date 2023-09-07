@@ -107,6 +107,23 @@ alias emux="vim $TMUX_CONF"
 alias tkp="tmux kill-pane -t $1"
 alias tkw="tmux kill-window -t $1"
 
+
+# send a command to all panes in current session, window
+function all_panes() {
+    session=`tmux display-message -p '#S'`
+    window=`tmux display-message -p -F '#{window_index}'`
+    for pane in `tmux list-panes -t $session:$window -F '#P' | sort`; do
+        tmux send-keys -t "$session:$window.$pane" "$@" C-m
+    done
+}
+
+function all_src() {
+    all_panes sbash
+    # undo any bad vim actions
+    all_panes Escape
+    all_panes u
+}
+
 alias econf="vim $BASHRC $TMUX_CONF $VIMRC $BASH_PROFILE"
 
 # ******************************************************************************
@@ -185,3 +202,15 @@ alias gaa="git add --all"
 alias gd="git diff"
 alias gco="git commit -m"
 alias gs="git status"
+
+# ******************************************************************************
+# current workflow
+# ******************************************************************************
+
+# cpsc 540
+function dbut() {
+    test=$1
+    db_dir
+    ant runtest "-Dtest=$test"
+    cd -
+}
