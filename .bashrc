@@ -68,6 +68,9 @@ function color() {
     done
 }
 
+# only exit with crtl+d upon 10th click 
+set -o ignoreeof
+
 # ******************************************************************************
 # editing config
 # ******************************************************************************
@@ -106,7 +109,6 @@ alias emux="vim $TMUX_CONF"
 # killing panes and windows
 alias tkp="tmux kill-pane -t $1"
 alias tkw="tmux kill-window -t $1"
-
 
 # send a command to all panes in current session, window
 function all_panes() {

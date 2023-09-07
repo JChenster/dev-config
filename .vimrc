@@ -3,7 +3,9 @@
 " ******************************************************************************
 
 " source plug ins
-so ~/.vim/plugins.vim
+if !empty($ISLOCAL)
+    so ~/.vim/plugins.vim
+endif
 
 " infer filetype
 if has('filetype')
@@ -182,11 +184,18 @@ nnoremap <leader>a :call Align()<CR>
 " visual mode entire file
 nnoremap <leader>af :call feedkeys("ggVG")<CR>
 
+" portable copy, paste, cut to temp file
+vmap <leader>c :w ~/.vimbuffer<CR><CR>
+map <leader>p :r ~/.vimbuffer<CR>
+vmap <leader>x <leader>cgvd
+
 " MAC ONLY
 " holy grail copy, paste, cut to system clipboard
-vmap <leader>c :w !pbcopy<CR><CR>
-map <leader>p :r !pbpaste<CR>
-vmap <leader>x <leader>cgvd
+if !empty("$ISLOCAL")
+    vmap <leader>c :w !pbcopy<CR><CR>
+    map <leader>p :r !pbpaste<CR>
+    vmap <leader>x <leader>cgvd
+endif
 
 " commenting and uncommenting
 autocmd Filetype cpp,c,go,java let b:comment_token="//"
