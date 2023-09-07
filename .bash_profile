@@ -1,7 +1,7 @@
 source ~/.bashrc
 
-# delete if not using local Mac
-export ISLOCAL="true"
+# uncomment this if using local mac
+#export ISLOCAL="true"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
