@@ -47,25 +47,34 @@ function gen_grep_exclude_flags() {
 }
 
 function grep_helper() {
-    flags=$1
-    fmt_func=$2
+    path=$1
+    flags=$2
+    fmt_func=$3
+    shift
     shift
     shift
 
     gen_grep_exclude_flags
     cmd="grep $flags $GREP_EXCLUDE_FLAGS --color=always"
-    cmd+=" \"$@\" ."
+    cmd+=" \"$@\" $path"
     echo "$cmd"
     eval $cmd | $fmt_func $query
 }
 
 # general purpose search
 function gr() {
-    grep_helper -nrI fmt_grep "$@"
+    grep_helper . -nrI fmt_grep "$@"
 }
 
 # search number of matches per file
 function grf() {
     query=$1
-    grep_helper -nrI $query fmt_match_count
+    grep_helper . -nrI $query fmt_match_count
+}
+
+# search on a file
+function gf() {
+    file=$1
+    shift
+    grep_helper $file -nrI fmt_grep "$@"
 }

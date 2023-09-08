@@ -210,6 +210,7 @@ alias gs="git status"
 # ******************************************************************************
 
 # cpsc 540
+# run a unit test
 function dbut() {
     test=$1
     db_dir

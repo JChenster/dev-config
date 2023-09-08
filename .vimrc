@@ -43,6 +43,7 @@ inoremap kj <Esc>
 " warp speed
 nnoremap J 10j
 nnoremap K 10k
+
 " allow us to still merge lines
 nnoremap m J
 
@@ -70,13 +71,13 @@ hi CursorColumn term=reverse ctermbg=239
 " status line
 set laststatus=2
 set statusline=
-set statusline +=%F                             "file path
-set statusline +=\ [%{&filetype}]               "file type
-set statusline +=\ %m%*                         "modified flag
-set statusline +=%=Buffer:\ %-5.3n
-set statusline +=%=Line:(%4l%*                  "current line
-set statusline +=\/%L)%*                        "total lines
-set statusline +=%=\ \ \ \Column:%3v\%*        "virtual column number
+set statusline +=%F                         " file path
+set statusline +=\ [%{&filetype}]           " file type
+set statusline +=\ %m%*                     " modified flag
+set statusline +=%=Buffer:\ %-5.3n          " buffer num
+set statusline +=%=Line:(%4l%*              " current line
+set statusline +=\/%L)%*                    " total lines
+set statusline +=%=\ \ \ \Column:%3v\%*     " virtual column number
 
 " enter to remove highlighting
 nnoremap <CR> :noh<CR>
@@ -250,6 +251,7 @@ vnoremap <leader>s :sort<CR>
 
 " re-source vim
 nmap <leader>s :source ~/.vimrc<CR><CR>:echo "re-sourced vimrc"<CR>
+
 " section comments
 function! SectionComment()
     call feedkeys("o# \<Esc>78a*\<Esc>")
