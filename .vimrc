@@ -11,6 +11,9 @@ endif
 if has('filetype')
     filetype indent plugin on
 endif
+" indenting
+set ai
+set si
 
 " syntax highlighting
 if has('syntax')

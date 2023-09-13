@@ -40,8 +40,10 @@ alias cl="clear"
 alias xx="exit"
 
 # comments on how to navigate bash command line in Mac
-# crtl-b, crtl-e to go to beginning/end of line
 # opt-left, opt-right to go backwards/forwards a word
+
+# only exit with crtl+d upon 10th click
+set -o ignoreeof
 
 # ******************************************************************************
 # colors
@@ -68,9 +70,6 @@ function color() {
     done
 }
 
-# only exit with crtl+d upon 10th click 
-set -o ignoreeof
-
 # ******************************************************************************
 # editing config
 # ******************************************************************************
@@ -83,10 +82,10 @@ function src() {
 }
 alias ezsh="vim $ZSHRC"
 
-export BASH_PROFILE="~/.bash_profile"
+export BASH_PROFILE=~/.bash_profile
 function sprof() {
     source $BASH_PROFILE
-    echo "Sourced $BASH_PROFILE" | color $YELLOW
+    echo "Sourced $BASH_PROFILE" | color $Yellow
 }
 alias eprof="vim $BASH_PROFILE"
 
@@ -106,6 +105,11 @@ alias evim="vim $VIMRC"
 export TMUX_CONF=~/.tmux.conf
 alias emux="vim $TMUX_CONF"
 
+alias econf="vim $BASHRC $TMUX_CONF $VIMRC $BASH_PROFILE"
+
+# ******************************************************************************
+# tmux
+# ******************************************************************************
 # killing panes and windows
 alias tkp="tmux kill-pane -t $1"
 alias tkw="tmux kill-window -t $1"
@@ -120,13 +124,23 @@ function all_panes() {
 }
 
 function all_src() {
-    all_panes sbash
-    # undo any bad vim actions
-    all_panes Escape
-    all_panes u
+    for cmd in sbash sprof
+    do
+        all_panes $cmd
+        # undo any bad vim actions
+        all_panes Escape
+        all_panes u
+    done
 }
 
-alias econf="vim $BASHRC $TMUX_CONF $VIMRC $BASH_PROFILE"
+function tatt() {
+    if [ "$#" -eq 0 ]
+    then
+        tmux attach -t 0
+    else
+        tmux attach -t $1
+    fi
+}
 
 # ******************************************************************************
 # source portable aliases
@@ -159,12 +173,25 @@ function ff() {
     find . -print | grep -i $pattern
 }
 
+function cmp_cpp() {
+    file_prefix=$1
+    g++ -std=c++20 -o $1 "$1.cpp"
+}
+export -f cmp_cpp
+
 # ******************************************************************************
 # useful dirs
 # ******************************************************************************
 
-alias db_dir="cd ~/Desktop/Databases/CPSC-440-FA23"
+DB_DIR="~/Desktop/Databases/CPSC-440-FA23"
+alias db_dir="cd $DB_DIR"
+alias db_sdir="cd $DB_DIR/src/java/simpledb"
+alias db_tdir="cd $DB_DIR/test/simpledb"
+
 alias pg_dir="cd ~/Desktop/Spring2023/Distributed/mapreduce"
+
+SP_DIR="~Desktop/SeniorProject"
+alias sp_dir="cd $SP_DIR"
 
 # ******************************************************************************
 # zoo stuff
@@ -214,6 +241,11 @@ alias gs="git status"
 function dbut() {
     test=$1
     db_dir
-    ant runtest "-Dtest=$test"
+    ant runtest "-Dtest=${test}Test"
     cd -
+}
+
+function qemu_start() {
+    out_dir="/Users/jeff/Desktop/SeniorProject/FreeRTOS/FreeRTOS/Demo/CORTEX_MPS2_QEMU_IAR_GCC/build/gcc/output"
+    qemu-system-arm -machine mps2-an385 -cpu cortex-m3 -kernel "$out_dir/RTOSDemo.out" -monitor none -nographic -serial stdio
 }
