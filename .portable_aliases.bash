@@ -69,7 +69,7 @@ function gr() {
 # search number of matches per file
 function grf() {
     query=$1
-    grep_helper . -nrI $query fmt_match_count
+    grep_helper . -nrI fmt_match_count "$@"
 }
 
 # search on a file

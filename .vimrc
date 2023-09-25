@@ -132,6 +132,7 @@ autocmd Filetype java iabbrev <buffer> ;j import java.util.
 autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>
 autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
 autocmd Filetype java iabbrev <buffer> ;p System.out.printf("\n");<ESC>5h
+autocmd Filetype c iabbrev <buffer> ;p printf("\n");<ESC>5h
 
 " for loops
 autocmd Filetype cpp,c,java iabbrev <buffer> ;f for (int i = 0; i < z; i++) {<CR><CR>}<Esc>?z<CR>xh
@@ -323,3 +324,34 @@ function! s:UsageHighlightUnderCursor()
 endfunction
 
 autocmd FileType * autocmd CursorMoved * call s:UsageHighlightUnderCursor()
+
+" ******************************************************************************
+" autocomplete
+" ******************************************************************************
+
+" always show autocomplete menu
+" always pick longest match
+set completeopt=longest,menuone
+
+" don't add a new line
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" keep menu item selected
+inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+  \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+
+" ******************************************************************************
+" ctags
+" ******************************************************************************
+
+set tags=./tags,tags;
+
+" Jump back up in the tag stack
+nnoremap <C-[> <C-t>
+
+" jump next or back in current matches
+nnoremap <leader>n :tn<CR>
+nnoremap <leader>b :tp<CR>
+
+" show all tag matches
+nnoremap <leader>tl :ts<CR>

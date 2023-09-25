@@ -16,6 +16,9 @@ alias ls="ls -a -G"
 alias rm="rm -i"
 alias cp="cp -i"
 
+# default cp
+alias dcp="\cp"
+
 # rm a lot of files with double confirmation
 function big_rm() {
     echo "${Red}These files will be deleted:${Color_Off}"
@@ -44,6 +47,9 @@ alias xx="exit"
 
 # only exit with crtl+d upon 10th click
 set -o ignoreeof
+
+alias ctags='/opt/homebrew/bin/ctags'
+alias gen_ctags="ctags -R *"
 
 # ******************************************************************************
 # colors
@@ -74,6 +80,9 @@ function color() {
 # editing config
 # ******************************************************************************
 
+# only for local machine
+export ISLOCAL=true
+
 # editing zsh config
 export ZSHRC=~/.zshrc
 function src() {
@@ -95,6 +104,8 @@ function sbash() {
     echo "Sourced $BASHRC" | color $Yellow
 }
 alias ebash="vim $BASHRC"
+alias eport="vim ~/.portable_aliases.bash"
+alias ework="vim ~/.workflow.bash"
 
 # vim config
 alias v="vim"
@@ -110,6 +121,7 @@ alias econf="vim $BASHRC $TMUX_CONF $VIMRC $BASH_PROFILE"
 # ******************************************************************************
 # tmux
 # ******************************************************************************
+
 # killing panes and windows
 alias tkp="tmux kill-pane -t $1"
 alias tkw="tmux kill-window -t $1"
@@ -123,6 +135,8 @@ function all_panes() {
     done
 }
 
+# source bash config files on all panes in current tmux window
+# TODO: this solution is very hacky, is there a cleaner solution?
 function all_src() {
     for cmd in sbash sprof
     do
@@ -133,6 +147,7 @@ function all_src() {
     done
 }
 
+# attach tmux session of the arg specified (or the last one if unspecified)
 function tatt() {
     if [ "$#" -eq 0 ]
     then
@@ -143,11 +158,16 @@ function tatt() {
 }
 
 # ******************************************************************************
-# source portable aliases
-# - grep magic
+# sourcing other files
 # ******************************************************************************
 
-. ~/.portable_aliases
+# for portable aliases we want to be able to call in non-bash programs like vim
+. ~/.portable_aliases.bash
+
+# source workflow config
+if test -f ~/.workflow.bash; then
+    . ~/.workflow.bash
+fi
 
 # ******************************************************************************
 # fun functions
@@ -160,6 +180,7 @@ function fws() {
     eval "grep -rlI $GREP_EXCLUDE_FLAGS '[[:blank:]]$' ." | color $Yellow
 }
 
+# quickly create a bash script
 function mksh() {
     script_name=$1
     echo "#!/bin/bash" > "$script_name.sh"
@@ -168,37 +189,30 @@ function mksh() {
     echo "Created script file: $file" | color $Red
 }
 
+# find a file by name in a subdirectory
 function ff() {
     pattern=$1
     find . -print | grep -i $pattern
 }
 
+# compile c++
 function cmp_cpp() {
     file_prefix=$1
     g++ -std=c++20 -o $1 "$1.cpp"
 }
 export -f cmp_cpp
 
-# ******************************************************************************
-# useful dirs
-# ******************************************************************************
-
-DB_DIR="~/Desktop/Databases/CPSC-440-FA23"
-alias db_dir="cd $DB_DIR"
-alias db_sdir="cd $DB_DIR/src/java/simpledb"
-alias db_tdir="cd $DB_DIR/test/simpledb"
-
-alias pg_dir="cd ~/Desktop/Spring2023/Distributed/mapreduce"
-
-SP_DIR="~Desktop/SeniorProject"
-alias sp_dir="cd $SP_DIR"
+# show the current path in your shell
+PS1="\[\`if [[ \$? = "0" ]]; then echo '\e[32m\h\e[0m'; else echo '\e[31m\h\e[0m' ; fi\`:\w\n\$ "
 
 # ******************************************************************************
-# zoo stuff
+# server stuff
 # ******************************************************************************
 
-NETID="jzc6"
+# in order to use this stuff, NETID variable must be set
 ZOO_HANDLE="$NETID@node.zoo.cs.yale.edu"
+GRACE_HANDLE="cpsc424_$NETID@grace.ycrc.yale.edu"
+GRACE_TRANSFER_HANDLE="cpsc424_$NETID@transfer-grace.ycrc.yale.edu"
 
 function gen_ssh_key() {
     ssh-keygen -t rsa -b 4096
@@ -207,20 +221,41 @@ function gen_ssh_key() {
 
 # ssh in fast
 alias zoo="ssh $ZOO_HANDLE"
+alias grace="ssh $GRACE_HANDLE"
 
-# put and get files / dirs on zoo easily
-function zoo_put() {
-    src_path=$1
-    dest_dir=$2
-    flags=$3
-    scp $flags $src_path "$ZOO_HANDLE:~/$dest_dir/"
+function remote_put() {
+    host=$1
+    src_path=$2
+    dest_dir=$3
+    flags=$4
+
+    scp $flags $src_path "$host:~/$dest_dir/"
 }
 
-function zoo_get() {
+# [src_path] [dest_dir] [flags]
+function zoo_put() {
+    remote_put $ZOO_HANDLE $1 $2 $3
+}
+
+function grace_put() {
+    remote_put $GRACE_TRANSFER_HANDLE $1 $2 $3
+}
+
+function remote_get() {
     src_path=$1
     dest_dir=$2
     flag=$3
-    scp $flag "$ZOO_HANDLE:~/$src_path" $dest_dir
+    host=$4
+
+    scp $flag "$host:~/$src_path" $dest_dir
+}
+
+function zoo_get() {
+    remote_get $ZOO_HANDLE $1 $2 $3
+}
+
+function grace_get() {
+    remote_get $GRACE_TRANSFER_HANDLE $1 $2 $3
 }
 
 # ******************************************************************************
@@ -233,19 +268,5 @@ alias gco="git commit -m"
 alias gs="git status"
 
 # ******************************************************************************
-# current workflow
+# to categorize
 # ******************************************************************************
-
-# cpsc 540
-# run a unit test
-function dbut() {
-    test=$1
-    db_dir
-    ant runtest "-Dtest=${test}Test"
-    cd -
-}
-
-function qemu_start() {
-    out_dir="/Users/jeff/Desktop/SeniorProject/FreeRTOS/FreeRTOS/Demo/CORTEX_MPS2_QEMU_IAR_GCC/build/gcc/output"
-    qemu-system-arm -machine mps2-an385 -cpu cortex-m3 -kernel "$out_dir/RTOSDemo.out" -monitor none -nographic -serial stdio
-}
