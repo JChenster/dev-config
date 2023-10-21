@@ -187,6 +187,7 @@ function mksh() {
     file="$script_name.sh"
     chmod 777 "$file"
     echo "Created script file: $file" | color $Red
+    vim $file
 }
 
 # find a file by name in a subdirectory
@@ -204,6 +205,23 @@ export -f cmp_cpp
 
 # show the current path in your shell
 PS1="\[\`if [[ \$? = "0" ]]; then echo '\e[32m\h\e[0m'; else echo '\e[31m\h\e[0m' ; fi\`:\w\n\$ "
+
+function kill_grep() {
+    ps aux | grep $1
+
+    read -p "Are you sure? " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo
+        read -p "For real? This can't be undone... " -n 1 -r
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            ps aux | grep $1 | awk '{print $2}' | xargs kill -9
+            echo "\n${Red}Deleted processes! ${Color_Off}"
+        fi
+    fi
+
+}
 
 # ******************************************************************************
 # server stuff
