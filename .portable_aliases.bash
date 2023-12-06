@@ -36,13 +36,19 @@ function fmt_match_count() {
 }
 
 # exclude wacky dirs
-GREP_EXCLUDE_DIRS=(".git")
+GREP_EXCLUDE_DIRS=".git"
+GREP_EXCLUDE_FILES="tags"
 GREP_EXCLUDE_FLAGS=""
 
 function gen_grep_exclude_flags() {
     GREP_EXCLUDE_FLAGS=""
-    for dir in "${GREP_EXCLUDE_DIRS[*]}"; do
+    for dir in $GREP_EXCLUDE_DIRS
+    do
         GREP_EXCLUDE_FLAGS+=" --exclude-dir=$dir"
+    done
+    for f in $GREP_EXCLUDE_FILES
+    do
+        GREP_EXCLUDE_FLAGS+=" --exclude=$f"
     done
 }
 

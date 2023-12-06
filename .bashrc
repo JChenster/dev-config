@@ -223,12 +223,16 @@ function kill_grep() {
 
 }
 
+alias tree2="tree -v -L 2"
+alias tree3="tree -v -L 3"
+alias tree4="tree -v -L 4"
+
 # ******************************************************************************
 # server stuff
 # ******************************************************************************
 
 # in order to use this stuff, NETID variable must be set
-ZOO_HANDLE="$NETID@node.zoo.cs.yale.edu"
+ZOO_HANDLE="$NETID@cobra.zoo.cs.yale.edu"
 GRACE_HANDLE="cpsc424_$NETID@grace.ycrc.yale.edu"
 GRACE_TRANSFER_HANDLE="cpsc424_$NETID@transfer-grace.ycrc.yale.edu"
 
@@ -260,10 +264,10 @@ function grace_put() {
 }
 
 function remote_get() {
-    src_path=$1
-    dest_dir=$2
-    flag=$3
-    host=$4
+    host=$1
+    src_path=$2
+    dest_dir=$3
+    flag=$4
 
     scp $flag "$host:~/$src_path" $dest_dir
 }

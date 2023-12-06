@@ -123,6 +123,9 @@ autocmd Filetype vim iabbrev <buffer> ;a autocmd Filetype  iabbrev <buffer><ESC>
 autocmd Filetype cpp,c,java iabbrev <buffer> ;c /*<CR><CR><BS>*/<Up>
 autocmd Filetype python iabbrev <buffer> ;c """<CR><CR>"""<Up><ESC><BS>
 
+" define
+autocmd Filetype cpp,c iabbrev <buffer> ;d #define
+
 " imports
 autocmd Filetype cpp,c iabbrev <buffer> ;i #include
 autocmd Filetype python,java iabbrev <buffer> ;i import
@@ -130,12 +133,13 @@ autocmd Filetype java iabbrev <buffer> ;j import java.util.
 
 " print
 autocmd Filetype cpp iabbrev <buffer> ;p std::cout <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>
+autocmd Filetype cpp iabbrev <buffer> ;e std::cerr <<  << std::endl;<ESC>5b3l<c-r>=Eatchar('\s')<CR>
 autocmd Filetype python iabbrev <buffer> ;p print()<ESC>h
 autocmd Filetype java iabbrev <buffer> ;p System.out.printf("\n");<ESC>5h
 autocmd Filetype c iabbrev <buffer> ;p printf("\n");<ESC>5h
 
 " for loops
-autocmd Filetype cpp,c,java iabbrev <buffer> ;f for (int i = 0; i < z; i++) {<CR><CR>}<Esc>?z<CR>xh
+autocmd Filetype cpp,c,java iabbrev <buffer> ;f for (int i = 0; i < z; ++i) {<CR><CR>}<Esc>?z<CR>xh
 autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 
 " ******************************************************************************
@@ -191,6 +195,7 @@ nnoremap <leader>af :call feedkeys("ggVG")<CR>
 
 " portable copy, paste, cut to temp file
 vmap <leader>c :w ~/.vimbuffer<CR><CR>
+vmap <leader>y :w ~/.vimbuffer<CR><CR>
 map <leader>p :r ~/.vimbuffer<CR>
 vmap <leader>x <leader>cgvd
 
@@ -198,6 +203,7 @@ vmap <leader>x <leader>cgvd
 " holy grail copy, paste, cut to system clipboard
 if !empty("$ISLOCAL")
     vmap <leader>c :w !pbcopy<CR><CR>
+    vmap <leader>y :w !pbcopy<CR><CR>
     map <leader>p :r !pbpaste<CR>
     vmap <leader>x <leader>cgvd
 endif
@@ -279,7 +285,7 @@ endfunction
 nnoremap <leader>t :call TruncateLine()<CR>
 
 " wrap a long comment across 2 lines (repeat if needed)
-autocmd FileType cpp,go,java nnoremap <leader>w o//k080lF Dj$p
+autocmd FileType cpp,go,java,c nnoremap <leader>w o//k080lF Dj$p
 autocmd FileType python,zsh,sh,make nnoremap <leader>w oX#k080lF Dj$p
 autocmd FileType text nmap <leader>w 080lF D ojp0x
 autocmd FileType vim nnoremap <leader>w oX"k080lF Dj$p
@@ -295,7 +301,7 @@ function! DecoratedYank()
     let decoration=repeat('-', len(filename)+1)
     let @*=decoration . "\n" . filename . ':' . "\n" . decoration . "\n" . @n
 endfunction
-vnoremap <leader>y :call DecoratedYank()<CR>
+vnoremap <leader>dy :call DecoratedYank()<CR>
 
 " ******************************************************************************
 " hype stuff
@@ -346,7 +352,11 @@ inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
 
 set tags=./tags,tags;
 
+" Jump dwon in the tag stack
+nnoremap <leader>] <C-]>
+
 " Jump back up in the tag stack
+nnoremap <leader>[ <C-t>
 nnoremap <C-[> <C-t>
 
 " jump next or back in current matches
