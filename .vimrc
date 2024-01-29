@@ -21,6 +21,7 @@ if has('syntax')
 endif
 
 " Indentation settings for using 4 spaces instead of tabs.
+set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
@@ -142,6 +143,12 @@ autocmd Filetype c iabbrev <buffer> ;p printf("\n");<ESC>5h
 autocmd Filetype cpp,c,java iabbrev <buffer> ;f for (int i = 0; i < z; ++i) {<CR><CR>}<Esc>?z<CR>xh
 autocmd Filetype python iabbrev <buffer> ;f for i in range():<ESC>hh
 
+" verilog fun
+autocmd Filetype verilog iabbrev <buffer> ;c always @(posedge clk) begin<CR><CR>end<ESC>
+autocmd Filetype verilog iabbrev <buffer> ;a always @(*) begin<CR><CR>end<ESC>
+autocmd Filetype verilog iabbrev <buffer> ;b begin
+autocmd Filetype verilog iabbrev <buffer> ;e end
+
 " ******************************************************************************
 " leader commands
 " ******************************************************************************
@@ -209,7 +216,7 @@ if !empty("$ISLOCAL")
 endif
 
 " commenting and uncommenting
-autocmd Filetype cpp,c,go,java let b:comment_token="//"
+autocmd Filetype cpp,c,go,java,verilog let b:comment_token="//"
 autocmd Filetype python,zsh,sh,make let b:comment_token="#"
 autocmd Filetype vim let b:comment_token="\""
 
